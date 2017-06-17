@@ -66,6 +66,7 @@ function removeItem(state, item) {
 //Section 3 Rendering functions 
 function render(state, element) {
     // add to html
+    // ternary
     var itemClass = item.checked ? "shopping-item__checked : '' ;" // if element checked, add class
 
     var addHTML = state.items.map(function(item){
@@ -95,7 +96,7 @@ function render(state, element) {
     })
 
     $('.button-label').click(function(event) {
-        event.preventDefault();
+        //event.preventDefault();
         checkItem(state, $('.shopping-list'));
     })
 
