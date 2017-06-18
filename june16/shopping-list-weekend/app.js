@@ -8,8 +8,11 @@
 // how can i get that to work for spaces? 
 // [solved] with elias
 
-// 2. how to require input? [solved] added "required" to html input line
-// there is another way, create a validation function and if else it in listeners
+// 2. how to require input? 
+// added "required" to html input line?
+// create a validation function and if else it in listeners?
+// [solved] with elias, grab the value in event listener, if length is == 0, return false
+// to check if user submit, true 
 
 
 // -- APP STATE ------------------------------
@@ -98,7 +101,7 @@ function checkItem(state, index){
 	console.log(state.items[index].checked)	
 }
 
-
+// old way, which did not work for spaces, example "toliet paper" would not be checked
 // function checkItem(state, itemName){
 // 	// console.log('check log works)
 // 	// [2]
@@ -123,7 +126,7 @@ function removeItem(state, index){
 	// console.log('remove log works)	
 	console.log('user just deleted: ' + index);
 	state.items.splice(index, 1);
-//	${this}.closest('li').remove()
+
 }
 
 
@@ -165,6 +168,7 @@ function iListen(){
 
 		const userAdded = ( $("#shopping-list-entry").val() );
 		if (userAdded.length === 0) {
+			console.log('you must add an item first');
 			return false;
 		} 
 		// console.log("user added: " + userAdded);
@@ -178,6 +182,8 @@ function iListen(){
 		event.preventDefault();
 
 		const clickedItem = $(this).closest($('li')).attr('id');
+
+
 		// console.log("closest item user clicked on is: " + clickedItem);
 
 		removeItem(appState, clickedItem);
