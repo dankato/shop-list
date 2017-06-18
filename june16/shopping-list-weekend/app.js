@@ -1,11 +1,12 @@
 // starter files https://github.com/Thinkful-Ed/shopping-list
-// Change in state => render state => user event => change in state => render state
+// Change in state => render state => user event => change in state (just data) => render state
 
 
 // problems
 // 1. adding items to the list that contain spaces, example "toilet paper"
 // my check item function currently only handles 1 word inputs
 // how can i get that to work for spaces? 
+// [solved] with elias
 
 // 2. how to require input? [solved] added "required" to html input line
 // there is another way, create a validation function and if else it in listeners
@@ -21,14 +22,14 @@ const appState = {
 
 
 // -- HTML ITEM TEMPLATE ------------------------------
-
 // originally had this function live under render however seeing the solution,
 // i moved it into its own category, template for best practice.
 
-function itemTemplate(state, item){
+function itemTemplate(state, item, i){
 	// using ternary operator, shorthand for if statement (condition ? value1 : value2)
 	const idClass = (item.checked ? "shopping-item__checked" : ""); 
-	return `<li id=${item.name}>
+	// return `<li id=${item.name}>
+	return `<li data-item-index="${i}">
         <span class="shopping-item ${idClass}">${item.name}</span>
         <div class="shopping-item-controls">
           <button class="shopping-item-toggle">
@@ -89,37 +90,52 @@ function addItem(state, itemName){
 	// [4] we take that value, grab its checked value and replace that
 	// value with its opposite value
 
+
 // [1]
-function checkItem(state, itemName){
-	// console.log('check log works)
-	// [2]
-	if(state.items.length != 0){
-		// [3]
-		let foundItem = state.items.find(function (item) {
-			return item.name === itemName;
-		});
-			// console.log(foundItem); // example of => {name: "toiletpaper", checked: false}
-		// [4]
-		if(foundItem){ 
-			foundItem.checked = !foundItem.checked;
-			// console.log(foundItem); // example of => {name: "toiletpaper", checked: true}
-		}
-	}
+function checkItem(state, index){
+	console.log(state.items[index].checked)	
+	state.items[index].checked = !state.items[index].checked;
+	console.log(state.items[index].checked)	
 }
+
+
+// function checkItem(state, itemName){
+// 	// console.log('check log works)
+// 	// [2]
+// 	if(state.items.length != 0){
+// 		// [3]
+// 		let foundItem = state.items.find(function (item) {
+// 			return item.name === itemName;
+// 		});
+// 			// console.log(foundItem); // example of => {name: "toiletpaper", checked: false}
+// 		// [4]
+// 		if(foundItem){ 
+// 			foundItem.checked = !foundItem.checked;
+// 			// console.log(foundItem); // example of => {name: "toiletpaper", checked: true}
+// 		}
+// 	}
+// }
+
+
 
 // *-- REMOVE --*
 function removeItem(state, index){
 	// console.log('remove log works)	
 	console.log('user just deleted: ' + index);
 	state.items.splice(index, 1);
+//	${this}.closest('li').remove()
 }
 
 
 // -- RENDER FUNCTIONS ------------------------------
 
 function render(state, element) {
-	let itemsHTML = state.items.map(function (item) {
-		return itemTemplate(state, item);
+
+	// let itemsHTML = state.items.map(function (item) {
+	// 	return itemTemplate(state, item);
+
+	let itemsHTML = state.items.map(function (item, i) {
+		return itemTemplate(state, item, i);
 	});
     element.html(itemsHTML);
 };
@@ -133,10 +149,13 @@ function iListen(){
 	$(".shopping-list").on('click', '.shopping-item-toggle' ,function(event){
 		event.preventDefault();
 
-		const clickedItem = $(this).closest($('li')).attr('id');
-		// console.log("closest item user clicked on is: " + clickedItem);
+		//const clickedItem = $(this).closest($('li')).attr('id');
+		const targetId = $(this).closest('li').data('item-index');
+		// console.log("closest item user clicked on is: " + clickedItem); //closest item user clicked on is: toiletpaper
+		console.log("closest item user clicked on is: " + targetId);  
 
-		checkItem(appState, clickedItem);
+		checkItem(appState, targetId);
+		// checkItem(appState, clickedItem);
 		render(appState, $('.shopping-list'));
 	});
 
@@ -145,6 +164,9 @@ function iListen(){
 		event.preventDefault();
 
 		const userAdded = ( $("#shopping-list-entry").val() );
+		if (userAdded.length === 0) {
+			return false;
+		} 
 		// console.log("user added: " + userAdded);
 
 		addItem(appState, userAdded);
